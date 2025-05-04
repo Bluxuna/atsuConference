@@ -84,6 +84,47 @@ def get_current_active_user(current_user: models.User = Depends(get_current_user
     return current_user
 
 
+# Admin check function
+def get_current_admin_user(current_user: models.User = Depends(get_current_active_user)):
+    if not current_user.is_admin:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Not authorized - Admin privileges required",
+        )
+    return current_user
+
+
+# Initial admin setup
+def create_initial_admin():
+    db = SessionLocal()
+    try:
+        # Check if any admin exists
+        admin = db.query(models.User).filter(models.User.is_admin == True).first()
+        if not admin:
+            # Check if the default admin username exists
+            default_admin = db.query(models.User).filter(models.User.username == "admin").first()
+            if not default_admin:
+                # Create default admin
+                hashed_password = get_password_hash("admin")  # Default password: admin
+                default_admin = models.User(
+                    username="admin",
+                    email="admin@example.com",
+                    hashed_password=hashed_password,
+                    is_active=True,
+                    is_admin=True
+                )
+                db.add(default_admin)
+                db.commit()
+                print("Created default admin user: username='admin', password='admin'")
+                print("IMPORTANT: Change the default admin password immediately!")
+    finally:
+        db.close()
+
+
+# Create default admin on startup
+create_initial_admin()
+
+
 # Routes
 @app.post("/token", response_model=schemas.Token)
 async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
@@ -229,10 +270,7 @@ def read_pending_posts(skip: int = 0, limit: int = 100, db: Session = Depends(ge
 
 @app.put("/admin/approve-post/{post_id}", response_model=schemas.Post)
 def approve_post(post_id: int, db: Session = Depends(get_db),
-                 current_user: models.User = Depends(get_current_active_user)):
-    if not current_user.is_admin:
-        raise HTTPException(status_code=403, detail="Not authorized - Admin only")
-
+                 current_user: models.User = Depends(get_current_admin_user)):
     db_post = db.query(models.Post).filter(models.Post.id == post_id).first()
     if db_post is None:
         raise HTTPException(status_code=404, detail="Post not found")
@@ -241,6 +279,34 @@ def approve_post(post_id: int, db: Session = Depends(get_db),
     db.commit()
     db.refresh(db_post)
     return db_post
+
+
+@app.put("/admin/promote-user/{user_id}", response_model=schemas.User)
+def promote_to_admin(user_id: int, db: Session = Depends(get_db),
+                     current_user: models.User = Depends(get_current_admin_user)):
+    # Only admins can promote other users to admin
+    user = db.query(models.User).filter(models.User.id == user_id).first()
+    if user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    user.is_admin = True
+    db.commit()
+    db.refresh(user)
+    return user
+
+
+@app.put("/admin/change-password", response_model=schemas.PasswordChangeResponse)
+def change_password(password_data: schemas.PasswordChange, db: Session = Depends(get_db),
+                    current_user: models.User = Depends(get_current_active_user)):
+    # Verify current password
+    if not verify_password(password_data.current_password, current_user.hashed_password):
+        raise HTTPException(status_code=400, detail="Current password is incorrect")
+
+    # Update password
+    current_user.hashed_password = get_password_hash(password_data.new_password)
+    db.commit()
+
+    return {"message": "Password changed successfully"}
 
 
 if __name__ == "__main__":

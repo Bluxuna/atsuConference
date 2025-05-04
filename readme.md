@@ -45,6 +45,10 @@ uvicorn app:app --reload
 ### Admin
 - `GET /admin/pending-posts/` - Get all pending posts
 - `PUT /admin/approve-post/{post_id}` - Approve a post
+- `PUT /admin/promote-user/{user_id}` - Promote a user to admin status
+
+### Password Management
+- `PUT /admin/change-password` - Change current user's password
 
 ## Requirements
 
@@ -63,11 +67,34 @@ email-validator==2.0.0
 
 ## Creating an Admin User
 
-To create an admin user, you'll need to use the SQLite database directly after creating a regular user:
+There are three ways to get an admin user in the system:
+
+### 1. Default Admin User (Automatic)
+
+The system automatically creates a default admin account on first startup:
+- Username: `admin`
+- Password: `admin`
+- Email: `admin@example.com`
+
+**IMPORTANT**: Change the default admin password immediately after first login using the `/admin/change-password` endpoint.
+
+### 2. Promote a User to Admin (API)
+
+An existing admin can promote any user to admin status using the API:
 
 ```bash
-# First register a regular user through the API
-# Then access SQLite database
+# Get your auth token first
+curl -X 'PUT' \
+  'http://localhost:8000/admin/promote-user/2' \
+  -H 'Authorization: Bearer YOUR_ADMIN_TOKEN_HERE'
+```
+
+### 3. Manual Database Update
+
+If needed, you can directly update the database:
+
+```bash
+# Access SQLite database
 sqlite3 forum.db
 
 # Update the user to be an admin
