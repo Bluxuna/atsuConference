@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Admin Panel</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    .post { border: 1px solid #ccc; padding: 10px; margin: 10px 0; }
+    button { margin-right: 10px; }
+  </style>
+</head>
+<body>
+  <h1>Admin Panel</h1>
+
+  <div id="login-section">
+    <h2>Login</h2>
+    <input type="text" id="username" placeholder="Username" />
+    <input type="password" id="password" placeholder="Password" />
+    <button onclick="login()">Login</button>
+    <p id="login-error" style="color: red;"></p>
+  </div>
+
+  <div id="admin-section" style="display: none;">
+    <h2>All Posts</h2>
+    <div id="posts-container"></div>
+  </div>
+
+  <script>
+    const API_URL = "http://localhost:8000";
+    let token = "";
+
+    async function login() {
+      const username = document.getElementById("username").value;
+      const password = document.getElementById("password").value;
+
+      const response = await fetch(`${API_URL}/token`, {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: `username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        token = data.access_token;
+        document.getElementById("login-section").style.display = "none";
+        document.getElementById("admin-section").style.display = "block";
+        loadPosts();
+      } else {
+        document.getElementById("login-error").textContent = data.detail || "Login failed.";
+      }
+    }
+
+    async function loadPosts() {
+      const response = await fetch(`${API_URL}/posts/`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+
+      const posts = await response.json();
+      const container = document.getElementById("posts-container");
+      container.innerHTML = "";
+
+      posts.forEach(post => {
+        const div = document.createElement("div");
+        div.className = "post";
+        div.innerHTML = `
+          <h3>${post.title}</h3>
+          <p>${post.content}</p>
+          <p>Approved: ${post.is_approved}</p>
+          ${
+            !post.is_approved
+              ? `<button onclick="approvePost(${post.id})">Approve</button>`
+              : ""
+          }
+          <button onclick="deletePost(${post.id})">Delete</button>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    async function approvePost(postId) {
+      await fetch(`${API_URL}/posts/${postId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({ is_approved: true })
+      });
+      loadPosts();
+    }
+
+    async function deletePost(postId) {
+      await fetch(`${API_URL}/posts/${postId}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      loadPosts();
+    }
+  </script>
+</body>
+</html>

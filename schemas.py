@@ -71,6 +71,3 @@ class Post(PostBase):
     updated_at: Optional[datetime] = None
     user_id: int
     user: User
-
-    class Config:
-        orm_mode = True
