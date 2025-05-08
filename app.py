@@ -7,7 +7,7 @@ from datetime import datetime, timedelta
 import jwt
 import bcrypt
 from pydantic import BaseModel
-
+from fastapi.middleware.cors import CORSMiddleware
 from database import SessionLocal, engine
 import models
 import schemas
@@ -23,7 +23,20 @@ ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+origins = [
+    "http://localhost:3000",  # Example: Your React development server
+    "http://localhost:8080",  # Example: Another frontend port
+    "https://your-frontend-domain.com",  # Example: Your production frontend domain
+    "*",  # WARNING: This allows all origins. Use with caution in production.
+]
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],  # Allows all HTTP methods (GET, POST, PUT, DELETE, etc.)
+    allow_headers=["*"],  # Allows all HTTP headers
+)
 
 # Dependency to get DB session
 def get_db():
@@ -260,10 +273,7 @@ def delete_post(post_id: int, db: Session = Depends(get_db),
 
 @app.get("/admin/pending-posts/", response_model=List[schemas.Post])
 def read_pending_posts(skip: int = 0, limit: int = 100, db: Session = Depends(get_db),
-                       current_user: models.User = Depends(get_current_active_user)):
-    if not current_user.is_admin:
-        raise HTTPException(status_code=403, detail="Not authorized - Admin only")
-
+                       current_user: models.User = Depends(get_current_admin_user)):
     posts = db.query(models.Post).filter(models.Post.is_approved == False).offset(skip).limit(limit).all()
     return posts
 

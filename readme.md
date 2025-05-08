@@ -25,6 +25,8 @@ pip install -r requirements.txt
 uvicorn app:app --reload
 ```
 
+4. Access the API documentation at http://localhost:8000/docs
+
 ## API Endpoints
 
 ### Authentication
@@ -49,21 +51,6 @@ uvicorn app:app --reload
 
 ### Password Management
 - `PUT /admin/change-password` - Change current user's password
-
-## Requirements
-
-```
-# requirements.txt
-fastapi==0.104.0
-uvicorn==0.23.2
-sqlalchemy==2.0.22
-pydantic==2.4.2
-pydantic-extra-types==2.1.0
-pyjwt==2.8.0
-bcrypt==4.0.1
-python-multipart==0.0.6
-email-validator==2.0.0
-```
 
 ## Creating an Admin User
 
@@ -101,7 +88,7 @@ sqlite3 forum.db
 UPDATE users SET is_admin = 1 WHERE username = 'your_admin_username';
 ```
 
-## Usage Example
+## Usage Examples
 
 ### Register a new user
 ```bash
@@ -132,5 +119,17 @@ curl -X 'POST' \
   -d '{
   "title": "My First Post",
   "content": "This is the content of my first post!"
+}'
+```
+
+### Change password
+```bash
+curl -X 'PUT' \
+  'http://localhost:8000/admin/change-password' \
+  -H 'Authorization: Bearer YOUR_TOKEN_HERE' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "current_password": "admin",
+  "new_password": "new_secure_password"
 }'
 ```

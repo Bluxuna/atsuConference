@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Web3 Social Network</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; max-width: 600px; margin: auto; }
+    input, button, textarea { display: block; width: 100%; margin: 10px 0; }
+    .post { border: 1px solid #ddd; padding: 10px; margin: 10px 0; border-radius: 5px; }
+  </style>
+</head>
+<body>
+
+  <h1>Simple Web3-Style Social</h1>
+
+  <!-- Login Form -->
+  <h2>Login</h2>
+  <input type="text" id="username" placeholder="Username" />
+  <input type="password" id="password" placeholder="Password" />
+  <button onclick="login()">Login</button>
+
+  <!-- Post Creation -->
+  <h2>Create Post</h2>
+  <input type="text" id="title" placeholder="Post Title" />
+  <textarea id="content" placeholder="Post Content"></textarea>
+  <button onclick="createPost()">Post</button>
+
+  <!-- Posts Feed -->
+  <h2>Feed</h2>
+  <div id="feed">Loading...</div>
+
+  <script>
+    let token = null;
+
+    async function login() {
+      const username = document.getElementById("username").value;
+      const password = document.getElementById("password").value;
+
+      const response = await fetch("http://127.0.0.1:8000/token", {
+        method: "POST",
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({
+          username,
+          password
+        })
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        token = data.access_token;
+        alert("Login successful!");
+        loadPosts();
+      } else {
+        alert("Login failed");
+      }
+    }
+
+    async function loadPosts() {
+      const response = await fetch("http://127.0.0.1:8000/posts/", {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      if (response.ok) {
+        const posts = await response.json();
+        const feed = document.getElementById("feed");
+        feed.innerHTML = "";
+        posts.forEach(post => {
+          const div = document.createElement("div");
+          div.className = "post";
+          div.innerHTML = `<strong>${post.title}</strong><br>${post.content}`;
+          feed.appendChild(div);
+        });
+      } else {
+        document.getElementById("feed").innerText = "Failed to load posts";
+      }
+    }
+
+    async function createPost() {
+      const title = document.getElementById("title").value;
+      const content = document.getElementById("content").value;
+
+      const response = await fetch("http://127.0.0.1:8000/posts/", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ title, content })
+      });
+
+      if (response.ok) {
+        alert("Post created (waiting for admin approval)");
+        loadPosts();
+      } else {
+        alert("Failed to create post");
+      }
+    }
+
+  </script>
+</body>
+</html>

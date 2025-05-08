@@ -4,7 +4,28 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="9e3a25ba-e271-4e06-abc7-c26b1d54fb2d" name="Changes" comment="for atsu conference this is a starting point" />
+    <list default="true" id="9e3a25ba-e271-4e06-abc7-c26b1d54fb2d" name="Changes" comment="some changes">
+      <change afterPath="$PROJECT_DIR$/frontend/TEST.HTML" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/admin.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/create_post.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/css/styles.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/dashboard.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/index.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/js/admin.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/js/api.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/js/auth.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/js/create_post.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/js/dashboard.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/register.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database.py" beforeDir="false" afterPath="$PROJECT_DIR$/database.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/forum.db" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/readme.md" beforeDir="false" afterPath="$PROJECT_DIR$/readme.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/schemas.py" beforeDir="false" afterPath="$PROJECT_DIR$/schemas.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -14,6 +35,7 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="Python Script" />
+        <option value="HTML File" />
       </list>
     </option>
   </component>
@@ -33,7 +55,9 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "DefaultHtmlFileTemplate": "HTML File",
     "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "Python.app.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
     "git-widget-placeholder": "master"
@@ -62,11 +86,31 @@
       <option name="project" value="LOCAL" />
       <updated>1746352121350</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="some changes">
+      <option name="closed" value="true" />
+      <created>1746352447904</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1746352447904</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="for atsu conference this is a starting point" />
-    <option name="LAST_COMMIT_MESSAGE" value="for atsu conference this is a starting point" />
+    <MESSAGE value="some changes" />
+    <option name="LAST_COMMIT_MESSAGE" value="some changes" />
   </component>
 </project>
